@@ -1,0 +1,187 @@
+% =============================================================
+%  Notre Dame / IEEE-styled Beamer template
+%  ----------------------------------------------------------
+%  Conventions used:
+%   * 16:9 widescreen.
+%   * Body text + math: Century-style serif (fouriernc) -- IEEE-paper feel.
+%   * Display math: amsmath (\texttt{equation}, \texttt{align}). Typographic
+%     rules follow IEEE editorial style (operators, subscripts, punctuation).
+%     The IEEEtran \texttt{IEEEeqnarray} environment is omitted here: it
+%     triggers duplicate PDF anchors with beamer + \texttt{hyperref}.
+%   * Frame titles + title slide title: condensed sans (Barlow Condensed
+%     if installed, Helvetica fallback) -- substitute for Acumin Pro
+%     ExtraCondensed.
+%   * Title slide places the two logos at the TOP, not below the title.
+%   * \institute{...} carries the ADVISOR name (rendered as "Advisor: ...").
+%
+%  How to use:
+%   1. Copy this file to <paper>_slides.tex.
+%   2. Drop logo PNGs into  reading_notes/logos/
+%        - logos/nd_engineering.png   (Notre Dame + College of Engineering)
+%        - logos/roar.png             (ROAR lab mark)
+%   3. Edit \title, \author, \institute below.
+%   4. Build:   latexmk -pdf <paper>_slides.tex
+%
+%  If "barlow.sty" is missing on your TeX distribution, install with:
+%     tlmgr install barlow
+%  (template auto-falls-back to Helvetica if absent; build still succeeds.)
+% =============================================================
+\documentclass[10pt, aspectratio=169]{beamer}
+
+% ---------- Math first, font next (order matters for fouriernc) ----------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+% bm reserves 4 bold math alphabets by default; with newtxmath + \mathbb +
+% \mathcal that exceeds the 16-alphabet limit. Cap its reservations BEFORE
+% loading bm.
+\newcommand{\hmmax}{0}
+\newcommand{\bmmax}{2}
+\usepackage{bm}
+
+% ---------- Body + math: Times + Times-style math (IEEE-conference feel) ----------
+% Mirrors ieeeconf.cls (\rmdefault=ptm) but also matches math to Times for
+% consistency. Must load AFTER amsmath/amssymb above.
+\usepackage{newtxtext,newtxmath}
+
+% ---------- Math operators (IEEE-style: function names in roman) ----------
+% Declared via \DeclareMathOperator so spacing around the symbol matches
+% \log, \sin, \exp etc. The starred form (\E) puts subscripts BELOW in
+% display style, like \sum and \lim. Use \mathrm{...} (not italic) for
+% multiletter subscript labels, e.g. \mathcal{L}_{\mathrm{rec}}.
+\DeclareMathOperator{\KL}{KL}
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% ---------- Sans family for titles: Barlow if installed, Helvetica fallback ----------
+% (Barlow is a narrow geometric sans -- closest free analogue to Acumin Pro
+%  ExtraCondensed currently in TeX Live. Install with:  tlmgr install barlow)
+\IfFileExists{barlow.sty}{%
+  \usepackage[sfdefault]{barlow}%
+}{%
+  \usepackage[scaled=0.95]{helvet}%
+}
+
+% ---------- Graphics, color, hyperref ----------
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+% ---------- Notre Dame navy palette ----------
+\definecolor{ndnavy}{RGB}{0, 0, 102}
+\definecolor{ndnavy70}{RGB}{60, 80, 130}
+
+% ---------- Theme: minimal, then customize ----------
+\usetheme{default}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+% Title-page typography
+\setbeamercolor{title}{fg=ndnavy}
+\setbeamerfont{title}{family=\sffamily, series=\bfseries, size*={36}{42}}
+\setbeamercolor{author}{fg=ndnavy}
+\setbeamerfont{author}{series=\bfseries}
+\setbeamercolor{institute}{fg=ndnavy}
+\setbeamerfont{institute}{series=\bfseries}
+
+% Frame-title typography (matches Template.pdf p.2)
+\setbeamercolor{frametitle}{fg=ndnavy}
+\setbeamerfont{frametitle}{family=\sffamily, series=\bfseries, size=\Large}
+
+% Footer: thin navy rule across the slide, then bare frame number bottom-right
+\setbeamercolor{page number in head/foot}{fg=ndnavy}
+\setbeamerfont{page number in head/foot}{series=\bfseries, size=\small}
+\setbeamertemplate{footline}{%
+  \hbox{\textcolor{ndnavy}{\rule{\paperwidth}{0.4pt}}}%
+  \vskip3pt%
+  \hbox to \paperwidth{\hfil
+    {\usebeamercolor[fg]{page number in head/foot}%
+     \usebeamerfont{page number in head/foot}%
+     \insertframenumber}%
+    \kern1em%
+  }%
+  \vskip4pt%
+}
+
+% ---------- Custom title slide: logos at TOP, then title, then author/advisor ----------
+\setbeamertemplate{title page}{%
+  \vspace*{0.2cm}%
+  \noindent
+  \begin{minipage}{\linewidth}
+    % Source PDF is 288x288pt with the logo confined to a thin horizontal
+    % strip at y in [131,157]; crop the surrounding whitespace at draw time.
+    \includegraphics[trim=16 131 16 131, clip, height=1.0cm]{logos/engineering_mark_horz2_PMS289.pdf}%
+    \hfill
+    % Source PNG (3405x1403 px @300dpi -> 817.20x336.72 bp natural size)
+    % has uneven white margins; crop them at draw time.
+    \includegraphics[trim=49 45 28 73, clip, height=1.0cm]{logos/ROAR_icon_wide.png}%
+  \end{minipage}%
+  \vfill
+  \begin{center}%
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}%
+  \end{center}%
+  \vfill
+  \begin{center}%
+    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}%
+    \vspace{0.3em}%
+    {\usebeamerfont{author}\usebeamercolor[fg]{institute}%
+     \textbf{Advisor:}~\insertinstitute\par}%
+  \end{center}%
+  \vspace*{0.6cm}%
+}
+
+% ---------- Title metadata (edit per deck) ----------
+\title{Slide Title Goes Here}
+\author{Your name}
+\institute{Dr.~Mengxue Hou}    % rendered as "Advisor: Dr. Mengxue Hou"
+\date{}                         % unused on title slide; kept for completeness
+
+% =============================================================
+\begin{document}
+
+% ---- Slide 1: title page ----
+\frame{\titlepage}
+
+% ---- Slide 2: text body, mirrors Template.pdf page 2 ----
+\begin{frame}{Body slide example}
+  \begin{itemize}
+    \item Body text renders in Century-style serif (\texttt{fouriernc}) to match
+          IEEE LaTeX paper bodies.
+    \item Frame titles render in condensed sans (Barlow Condensed if installed,
+          Helvetica fallback) -- substitute for Acumin Pro ExtraCondensed.
+    \item Frame number sits bottom-right, bare integer, no ``/N''.
+  \end{itemize}
+\end{frame}
+
+% ---- Slide 3: equations, IEEE-style ----
+\begin{frame}{IEEE-style equations}
+  Equations are part of the sentence flow and end with the appropriate
+  punctuation. Define the posterior over the stochastic latent as
+  \begin{equation}\label{eq:posterior}
+    s_t \sim q_\phi(s_t \mid h_t, o_t),
+  \end{equation}
+  and decompose the world-model objective into a reconstruction term and a
+  KL term,
+  \begin{align}
+    \mathcal{L}_{\mathrm{rec}}
+    &= -\E_{q_\phi}\!\left[\log p_\theta(o_t \mid h_t, s_t)\right],
+    \label{eq:rec}
+    \\
+    \mathcal{L}_{\mathrm{KL}}
+    &= \KL\!\big(q_\phi(s_t \mid h_t, o_t)\,\big\|\,p_\theta(s_t \mid h_t)\big).
+    \label{eq:kl}
+  \end{align}
+  Combining~\eqref{eq:rec} and~\eqref{eq:kl} with~\eqref{eq:posterior} gives
+  the ELBO used during training.
+
+  \medskip
+  Inline conventions: bold lowercase italic for vectors $\bm{x}\in\mathbb{R}^{n}$,
+  bold capital italic for matrices $\bm{A}\in\mathbb{R}^{n\times n}$, upright
+  roman subscripts for word labels ($\mathcal{L}_{\mathrm{rec}}$ not
+  $\mathcal{L}_{rec}$), optimizers via $\argmin_{\theta} \mathcal{L}(\theta)$.
+\end{frame}
+
+\end{document}
