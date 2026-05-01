@@ -91,12 +91,10 @@
 \setbeamercolor{frametitle}{fg=ndnavy}
 \setbeamerfont{frametitle}{family=\sffamily, series=\bfseries, size=\Large}
 
-% Footer: thin navy rule across the slide, then bare frame number bottom-right
+% Footer: bare frame number bottom-right, no rule/progress bar.
 \setbeamercolor{page number in head/foot}{fg=ndnavy}
 \setbeamerfont{page number in head/foot}{series=\bfseries, size=\small}
 \setbeamertemplate{footline}{%
-  \hbox{\textcolor{ndnavy}{\rule{\paperwidth}{0.4pt}}}%
-  \vskip3pt%
   \hbox to \paperwidth{\hfil
     {\usebeamercolor[fg]{page number in head/foot}%
      \usebeamerfont{page number in head/foot}%
